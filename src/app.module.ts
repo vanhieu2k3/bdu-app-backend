@@ -5,10 +5,10 @@ import { SinhVien } from './entities/sinhvien.entity';
 import { AuthModule } from './modules/auth.module';
 import { SinhVienModule } from './modules/sinhvien.module';
 import { AppController } from './app.controller';
-import { SinhVienController } from './controllers/sinhvien.controller';
 import { AppService } from './app.service';
-import { SinhVienService } from './services/sinhvien.service';
-
+import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from './mongo-test/users.module';
+import { CustomLogger } from './mongo-test/logger.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,19 +16,21 @@ import { SinhVienService } from './services/sinhvien.service';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT, 10),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT, 10),
+      username: process.env.POSTGRES_USERNAME,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DATABASE,
       entities: [SinhVien],
       synchronize: true,
     }),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     TypeOrmModule.forFeature([SinhVien]),
     AuthModule,
     SinhVienModule,
+    UsersModule,
   ],
-  controllers: [AppController, SinhVienController],
-  providers: [AppService, SinhVienService],
+  controllers: [AppController],
+  providers: [AppService, CustomLogger],
 })
 export class AppModule {}
